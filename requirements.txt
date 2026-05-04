@@ -1,2 +1,2 @@
-pyrogram==2.0.100
+pyrogram==1.4.16
 pytgcalls==0.0.24
