@@ -1,9 +1,7 @@
 import asyncio
 from pyrogram import Client, filters
-from pytgcalls import PyTgCalls
-from pytgcalls.types import Update
-from pytgcalls.types.input_stream import InputAudioStream
-from pytgcalls.types.input_stream.audio import AudioPiped
+from pytgcalls import PyTgCalls, idle
+from pytgcalls.types import MediaStream
 
 API_ID = 38091412
 API_HASH = "e182f84704911e253c33b8015b922cdd"
@@ -16,21 +14,14 @@ call_py = PyTgCalls(app)
 @app.on_message(filters.command("start_quran") & filters.chat(CHAT_ID))
 async def start_quran(client, message):
     await message.reply("🕌 جاري تشغيل بث الحرم المكي...")
-    await call_py.join_group_call(
-        CHAT_ID,
-        InputAudioStream(AudioPiped(MAKKAH_STREAM)),
-    )
+    call_py.play(CHAT_ID, MediaStream(MAKKAH_STREAM))
     await message.reply("✅ تلاوة الحرم المكي تُبث الآن 🎙️")
 
 @app.on_message(filters.command("stop_quran") & filters.chat(CHAT_ID))
 async def stop_quran(client, message):
-    await call_py.leave_group_call(CHAT_ID)
+    call_py.leave_group_call(CHAT_ID)
     await message.reply("⏹️ تم إيقاف البث")
 
-async def main():
-    await call_py.start()
-    await app.start()
-    print("✅ شغال")
-    await asyncio.get_event_loop().run_forever()
-
-asyncio.run(main())
+app.start()
+call_py.start()
+idle()
