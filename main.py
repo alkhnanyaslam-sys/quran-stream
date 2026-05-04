@@ -1,33 +1,47 @@
 import os
+import asyncio
 from pyrogram import Client, filters
-from pytgcalls import PyTgCalls, idle
+from pytgcalls import PyTgCalls
 from pytgcalls.types import MediaStream
 
 API_ID = 38091412
 API_HASH = "e182f84704911e253c33b8015b922cdd"
-CHAT_ID = -1003373397195
-MAKKAH_STREAM = "https://backup.qurango.net/radio/mishary_rashid"
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("8711409458:AAERTH_ZxBMKKYchEGwsyhHj6wWkFtl0GKk")
+STREAM_URL = "https://backup.qurango.net/radio/mishary_rashid"
 
-client = Client(
-    "quran_session",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN
-)
-app = PyTgCalls(client)
+app = Client("quran_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+call_py = PyTgCalls(app)
+active_streams = {}
 
-@client.on_message(filters.command("start_quran") & filters.chat(CHAT_ID))
-async def start_quran(c, message):
-    await message.reply("🕌 جاري تشغيل بث الحرم المكي...")
-    app.play(CHAT_ID, MediaStream(MAKKAH_STREAM))
-    await message.reply("✅ تلاوة الحرم المكي تُبث الآن 🎙️")
+@app.on_message(filters.command("start"))
+async def start_stream(client, message):
+    chat_id = message.chat.id
+    if chat_id in active_streams:
+        await message.reply("🔴 البث مشغل بالفعل!")
+        return
+    try:
+        await call_py.join_group_call(chat_id, MediaStream(STREAM_URL))
+        active_streams[chat_id] = True
+        await message.reply("✅ تم بدء بث الحرم المكي 🕌")
+    except Exception as e:
+        await message.reply(f"❌ خطأ: {str(e)}")
 
-@client.on_message(filters.command("stop_quran") & filters.chat(CHAT_ID))
-async def stop_quran(c, message):
-    app.leave_group_call(CHAT_ID)
-    await message.reply("⏹️ تم إيقاف البث")
+@app.on_message(filters.command("stop"))
+async def stop_stream(client, message):
+    chat_id = message.chat.id
+    if chat_id not in active_streams:
+        await message.reply("🔴 لا يوجد بث نشط!")
+        return
+    try:
+        await call_py.leave_group_call(chat_id)
+        del active_streams[chat_id]
+        await message.reply("⏹️ تم إيقاف البث")
+    except Exception as e:
+        await message.reply(f"❌ خطأ: {str(e)}")
 
-client.start()
-app.start()
-idle()
+async def main():
+    async with app:
+        print("🤖 البوت يعمل...")
+        await asyncio.sleep(float('inf'))
+
+asyncio.run(main())
