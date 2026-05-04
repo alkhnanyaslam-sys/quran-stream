@@ -6,7 +6,7 @@ from pytgcalls.types import MediaStream
 
 API_ID = 38091412
 API_HASH = "e182f84704911e253c33b8015b922cdd"
-BOT_TOKEN = os.getenv("8711409458:AAERTH_ZxBMKKYchEGwsyhHj6wWkFtl0GKk")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 STREAM_URL = "https://backup.qurango.net/radio/mishary_rashid"
 
 app = Client("quran_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
