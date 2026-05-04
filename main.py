@@ -20,7 +20,7 @@ async def start_stream(client, message):
         await message.reply("🔴 البث مشغل بالفعل!")
         return
     try:
-        await call_py.join_group_call(chat_id, MediaStream(STREAM_URL))
+        await call_py.play(chat_id, MediaStream(STREAM_URL))
         active_streams[chat_id] = True
         await message.reply("✅ تم بدء بث الحرم المكي 🕌")
     except Exception as e:
@@ -41,6 +41,7 @@ async def stop_stream(client, message):
 
 async def main():
     async with app:
+        await call_py.start()
         print("🤖 البوت يعمل...")
         await asyncio.sleep(float('inf'))
 
