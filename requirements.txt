@@ -1,2 +1,2 @@
-pyrogram==1.4.16
-pytgcalls==0.0.24
+telethon
+py-tgcalls[telethon]==2.2.11
