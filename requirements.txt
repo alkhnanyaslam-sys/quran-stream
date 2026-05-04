@@ -1,3 +1,2 @@
-pyrogram
-TgCrypto
-py-tgcalls[pyrogram]==2.2.11
+pyrogram==2.0.106
+pytgcalls==2.0.0
